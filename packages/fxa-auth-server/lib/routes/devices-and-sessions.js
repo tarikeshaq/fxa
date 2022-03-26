@@ -10,7 +10,7 @@ const ajv = new Ajv();
 const hex = require('buf').to.hex;
 const error = require('../error');
 const fs = require('fs');
-const isA = require('@hapi/joi');
+const isA = require('joi');
 const path = require('path');
 const validators = require('./validators');
 
@@ -451,7 +451,7 @@ module.exports = (
           ),
         },
         response: {
-          schema: {},
+          schema: isA.object({}),
         },
       },
       handler: async function (request) {
@@ -785,7 +785,7 @@ module.exports = (
             .label('Account.deviceDestroy_payload'),
         },
         response: {
-          schema: {},
+          schema: isA.object({}),
         },
       },
       handler: async function (request) {

@@ -20,12 +20,18 @@ const {
   AppConfig,
 } = require('../../../../lib/types');
 const mergeConfigsStub = sandbox.stub();
+
 const { PaymentConfigManager } = proxyquire(
   '../../../../lib/payments/configuration/manager',
   {
-    'fxa-shared/subscriptions/configuration/utils': {
-      mergeConfigs: mergeConfigsStub,
-    },
+    'fxa-shared/payments/configuration/manager': proxyquire(
+      'fxa-shared/payments/configuration/manager',
+      {
+        '../../subscriptions/configuration/utils': {
+          mergeConfigs: mergeConfigsStub,
+        },
+      }
+    ),
   }
 );
 const { setupFirestore } = require('../../../../lib/firestore-db');
@@ -42,6 +48,11 @@ const mockConfig = {
         clientEmail: 'mock-client-email',
       },
       keyFile: 'mock-private-keyfile',
+    },
+    productConfigsFirestore: {
+      schemaValidation: {
+        cdnUrlRegex: '^https://',
+      },
     },
   },
 };
@@ -277,10 +288,7 @@ describe('PaymentConfigManager', () => {
         await paymentConfigManager.storePlanConfig(newPlan, randomUUID());
         assert.fail('should have thrown');
       } catch (err) {
-        assert.equal(
-          err.jse_cause.message,
-          'child "active" fails because ["active" is required]'
-        );
+        assert.equal(err.jse_cause.message, '"active" is required');
         assert.equal(err.errno, errors.ERRNO.INTERNAL_VALIDATION_ERROR);
       }
     });
