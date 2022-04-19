@@ -21,9 +21,12 @@ export const planConfigJoiKeys = {
   appleProductId: joi.array().items(joi.string()).optional(),
 };
 
-export const planConfigSchema = baseConfigSchema.keys(planConfigJoiKeys).keys({
+const allKeys = {
+  ...planConfigJoiKeys,
   active: joi.boolean().required(),
-});
+};
+
+export const planConfigSchema = baseConfigSchema.keys(allKeys);
 export class PlanConfig implements BaseConfig {
   // Firestore document id
   id!: string;

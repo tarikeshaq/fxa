@@ -19,31 +19,33 @@ export const productConfigJoiKeys = {
   promotionCodes: joi.array().items(joi.string()).optional(),
 };
 
-export const productConfigSchema = baseConfigSchema
-  .keys(productConfigJoiKeys)
-  .keys({
-    capabilities: joi.object().required(),
-    locales: joi.object().required(),
-    styles: joi.object().required(),
-    support: joi.object().required(),
-    uiContent: joi
-      .object({
-        subtitle: joi.string(),
-        details: joi.array().items(joi.string()),
-        successActionButtonLabel: joi.string(),
-        upgradeCTA: joi.string(),
-      })
-      .required(),
-    urls: joi
-      .object({
-        download: joi.string().uri().required(),
-        privacyNotice: joi.string().uri().required(),
-        termsOfService: joi.string().uri().required(),
-        termsOfServiceDownload: joi.string().uri().required(),
-        webIcon: joi.string().uri().required(),
-      })
-      .required(),
-  });
+const allKeys = {
+  ...productConfigJoiKeys,
+  capabilities: joi.object().required(),
+  locales: joi.object().required(),
+  styles: joi.object().required(),
+  support: joi.object().required(),
+  uiContent: joi
+    .object({
+      subtitle: joi.string(),
+      details: joi.array().items(joi.string()),
+      successActionButtonLabel: joi.string(),
+      upgradeCTA: joi.string(),
+    })
+    .required(),
+  urls: joi
+    .object({
+      download: joi.string().uri().required(),
+      privacyNotice: joi.string().uri().required(),
+      termsOfService: joi.string().uri().required(),
+      termsOfServiceDownload: joi.string().uri().required(),
+      webIcon: joi.string().uri().required(),
+    })
+    .required(),
+};
+
+export const productConfigSchema = baseConfigSchema.keys(allKeys);
+
 export class ProductConfig implements BaseConfig {
   // Firestore document id
   id!: string;
