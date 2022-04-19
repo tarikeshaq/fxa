@@ -139,7 +139,7 @@ describe('/authorization POST', function () {
             code_challenge_method: 'bad_method',
           },
           'code_challenge_method',
-          'must be one of [S256]'
+          'must be [S256]'
         );
       });
 
