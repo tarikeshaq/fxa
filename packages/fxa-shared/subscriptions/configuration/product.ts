@@ -40,6 +40,7 @@ const allKeys = {
       termsOfService: joi.string().uri().required(),
       termsOfServiceDownload: joi.string().uri().required(),
       webIcon: joi.string().uri().required(),
+      emailIcon: joi.string().uri().optional(),
     })
     .required(),
 };
