@@ -889,7 +889,9 @@ describe('/v1', function () {
           assert.equal(res.statusCode, 200);
           assertSecurityHeaders(res);
           assert(res.result.access_token);
-          assert.isUndefined(validators.jwt.validate(res.result.access_token).error);
+          assert.isUndefined(
+            validators.jwt.validate(res.result.access_token).error
+          );
           const jwt = decodeJWT(res.result.access_token);
           assert.strictEqual(jwt.claims.sub, USERID);
           assert.deepEqual(jwt.claims.aud, [
@@ -2133,6 +2135,7 @@ describe('/v1', function () {
           payload: {
             client_id: clientId,
             grant_type: 'fxa-credentials',
+            scope: 'profile testme',
           },
         });
         assertInvalidRequestParam(res.result, 'assertion');
@@ -2186,6 +2189,7 @@ describe('/v1', function () {
             grant_type: 'fxa-credentials',
             ttl: 42,
             assertion: AN_ASSERTION,
+            scope: 'profile testme',
           },
         });
         assertSecurityHeaders(res);
@@ -2202,6 +2206,7 @@ describe('/v1', function () {
             grant_type: 'fxa-credentials',
             ttl: MAX_TTL_S * 100,
             assertion: AN_ASSERTION,
+            scope: 'profile testme',
           },
         });
         assertSecurityHeaders(res);
@@ -2234,6 +2239,7 @@ describe('/v1', function () {
             client_id: clientId,
             grant_type: 'fxa-credentials',
             assertion: AN_ASSERTION,
+            scope: 'profile testme',
           },
         });
         assertSecurityHeaders(res);
