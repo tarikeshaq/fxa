@@ -12,6 +12,7 @@
   "include": [
     "bin/*",
     "scripts/*.ts",
+    "docs/swagger/*.ts",
     "lib/senders/emails/templates/*/includes.ts"
   ]
 }
