@@ -21,12 +21,9 @@ export const planConfigJoiKeys = {
   appleProductId: joi.array().items(joi.string()).optional(),
 };
 
-const allKeys = {
-  ...planConfigJoiKeys,
-  active: joi.boolean().required(),
-};
+const buildPlanConfigSchema = (schema: joi.ObjectSchema) =>
+  schema.fork(['active'], (schema) => schema.required());
 
-export const planConfigSchema = baseConfigSchema.keys(allKeys);
 export class PlanConfig implements BaseConfig {
   // Firestore document id
   id!: string;
@@ -55,7 +52,17 @@ export class PlanConfig implements BaseConfig {
   googlePlaySku?: string[];
   appleProductId?: string[];
 
-  static async validate(planConfig: PlanConfig) {
+  static async validate(
+    planConfig: PlanConfig,
+    schemaValidation: ProductConfigSchemaValidation
+  ) {
+    const extendedBaseSchema = extendBaseConfigSchema(
+      baseConfigSchema.keys(planConfigJoiKeys),
+      schemaValidation.cdnUrlRegex
+    );
+
+    const planConfigSchema = buildPlanConfigSchema(extendedBaseSchema);
+
     try {
       const value = await planConfigSchema.validateAsync(planConfig, {
         abortEarly: false,

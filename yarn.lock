@@ -16388,16 +16388,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"coffeescript@npm:^2.6.1":
-  version: 2.6.1
-  resolution: "coffeescript@npm:2.6.1"
-  bin:
-    cake: bin/cake
-    coffee: bin/coffee
-  checksum: c53db08b1baa7405b6c549fad5c28dd88eeb5f04c98a1eb495788205f1785789c4af22cb65343047f8b717f53b88293047450708cb92d4ea3b58d0cec0df7338
-  languageName: node
-  linkType: hard
-
 "collapse-white-space@npm:^1.0.2":
   version: 1.0.6
   resolution: "collapse-white-space@npm:1.0.6"
@@ -22330,7 +22320,7 @@ fsevents@~2.1.1:
     grunt-newer: 1.3.0
     hapi-auth-jwt2: ^10.2.0
     hapi-error: ^2.3.0
-    hapi-swagger: latest
+    hapi-swagger: ^14.3.0
     hkdf: 0.0.2
     hot-shots: ^9.0.0
     i18n-iso-countries: ^7.4.0
@@ -23306,7 +23296,6 @@ fsevents@~2.1.1:
   version: 0.0.0-use.local
   resolution: "fxa@workspace:."
   dependencies:
-    coffeescript: ^2.6.1
     diffparser: ^2.0.1
     eslint: ^7.32.0
     eslint-plugin-fxa: ^2.0.2
@@ -24728,7 +24717,7 @@ fsevents@~2.1.1:
   languageName: node
   linkType: hard
 
-"hapi-swagger@npm:latest":
+"hapi-swagger@npm:^14.3.0":
   version: 14.3.0
   resolution: "hapi-swagger@npm:14.3.0"
   dependencies:
