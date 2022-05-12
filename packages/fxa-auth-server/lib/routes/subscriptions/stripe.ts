@@ -37,6 +37,7 @@ import { handleAuth } from './utils';
 import { COUNTRIES_LONG_NAME_TO_SHORT_NAME_MAP } from '../../payments/stripe';
 import { deleteAccountIfUnverified } from '../utils/account';
 import SUBSCRIPTIONS_DOCS from '../../../docs/swagger/subscriptions-api';
+import { ALL_RPS_CAPABILITIES_KEY } from 'fxa-shared/subscriptions/configuration/base';
 
 // List of countries for which we need to look up the province/state of the
 // customer.
@@ -133,13 +134,17 @@ export class StripeHandler {
     const capabilitiesByClientId: { [clientId: string]: string[] } = {};
 
     const plans = await this.stripeHelper.allAbbrevPlans();
+    const planConfigs = await this.stripeHelper.allMergedPlanConfigs();
 
     const capabilitiesForAll: string[] = [];
     for (const plan of plans) {
       const metadata = metadataFromPlan(plan);
+      const pConfig = planConfigs[plan.plan_id] || {};
+
       if (metadata.capabilities) {
         capabilitiesForAll.push(
-          ...commaSeparatedListToArray(metadata.capabilities)
+          ...commaSeparatedListToArray(metadata.capabilities),
+          ...(pConfig.capabilities[ALL_RPS_CAPABILITIES_KEY] || [])
         );
       }
       const capabilityKeys = Object.keys(metadata).filter((key) =>
@@ -150,7 +155,9 @@ export class StripeHandler {
         const capabilities = commaSeparatedListToArray((metadata as any)[key]);
         capabilitiesByClientId[clientId] = (
           capabilitiesByClientId[clientId] || []
-        ).concat(capabilities);
+        )
+          .concat(capabilities)
+          .concat(pConfig.capabilities[clientId] || []);
       }
     }
 
@@ -256,7 +263,7 @@ export class StripeHandler {
     // Stripe does not allow customers to change currency after a currency is set, which
     // occurs on initial subscription. (https://stripe.com/docs/billing/customer#payment)
     const customer = await this.stripeHelper.fetchCustomer(uid);
-    const planCurrency = (await this.stripeHelper.findPlanById(planId))
+    const planCurrency = (await this.stripeHelper.findAbbrevPlanById(planId))
       .currency;
     if (customer && customer.currency != planCurrency) {
       throw error.currencyCurrencyMismatch(customer.currency, planCurrency);
@@ -499,8 +506,9 @@ export class StripeHandler {
 
       // Skip the payment source check if there's no payment method id.
       if (paymentMethodId) {
-        const planCurrency = (await this.stripeHelper.findPlanById(priceId))
-          .currency;
+        const planCurrency = (
+          await this.stripeHelper.findAbbrevPlanById(priceId)
+        ).currency;
         paymentMethod = await this.stripeHelper.getPaymentMethod(
           paymentMethodId
         );

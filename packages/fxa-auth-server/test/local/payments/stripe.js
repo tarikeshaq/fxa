@@ -1255,7 +1255,7 @@ describe('StripeHelper', () => {
       sandbox
         .stub(stripeHelper.stripe.promotionCodes, 'list')
         .resolves({ data: [promotionCode] });
-      sandbox.stub(stripeHelper, 'findPlanById').resolves({
+      sandbox.stub(stripeHelper, 'findAbbrevPlanById').resolves({
         plan_metadata: {
           [STRIPE_PRICE_METADATA.PROMOTION_CODES]: 'promo1',
         },
@@ -1269,7 +1269,10 @@ describe('StripeHelper', () => {
           code: 'promo1',
         }
       );
-      sinon.assert.calledOnceWithExactly(stripeHelper.findPlanById, 'planId');
+      sinon.assert.calledOnceWithExactly(
+        stripeHelper.findAbbrevPlanById,
+        'planId'
+      );
       sinon.assert.calledOnceWithExactly(
         stripeHelper.stripe.promotionCodes.list,
         {
@@ -1289,7 +1292,7 @@ describe('StripeHelper', () => {
       sandbox
         .stub(stripeHelper.stripe.promotionCodes, 'list')
         .resolves({ data: [promotionCode] });
-      sandbox.stub(stripeHelper, 'findPlanById').resolves({
+      sandbox.stub(stripeHelper, 'findAbbrevPlanById').resolves({
         plan_metadata: {
           [STRIPE_PRICE_METADATA.PROMOTION_CODES]: 'promo1',
         },
@@ -1303,7 +1306,7 @@ describe('StripeHelper', () => {
           code: 'promo1',
         }
       );
-      sinon.assert.notCalled(stripeHelper.findPlanById);
+      sinon.assert.notCalled(stripeHelper.findAbbrevPlanById);
       sinon.assert.calledOnceWithExactly(
         stripeHelper.stripe.promotionCodes.list,
         {
@@ -1318,7 +1321,7 @@ describe('StripeHelper', () => {
       sandbox
         .stub(stripeHelper.stripe.promotionCodes, 'list')
         .resolves({ data: [promotionCode] });
-      sandbox.stub(stripeHelper, 'findPlanById').resolves({
+      sandbox.stub(stripeHelper, 'findAbbrevPlanById').resolves({
         plan_metadata: {},
       });
       const actual = await stripeHelper.findValidPromoCode('promo1', 'planId');
@@ -1330,7 +1333,10 @@ describe('StripeHelper', () => {
           code: 'promo1',
         }
       );
-      sinon.assert.calledOnceWithExactly(stripeHelper.findPlanById, 'planId');
+      sinon.assert.calledOnceWithExactly(
+        stripeHelper.findAbbrevPlanById,
+        'planId'
+      );
       sinon.assert.calledOnceWithExactly(
         stripeHelper.stripe.promotionCodes.list,
         {
@@ -1348,7 +1354,7 @@ describe('StripeHelper', () => {
       sandbox
         .stub(stripeHelper.stripe.promotionCodes, 'list')
         .resolves({ data: [promotionCode] });
-      sandbox.stub(stripeHelper, 'findPlanById').resolves({
+      sandbox.stub(stripeHelper, 'findAbbrevPlanById').resolves({
         plan_metadata: {
           [STRIPE_PRICE_METADATA.PROMOTION_CODES]: 'promo1',
         },
@@ -1362,7 +1368,7 @@ describe('StripeHelper', () => {
           code: 'promo1',
         }
       );
-      sinon.assert.notCalled(stripeHelper.findPlanById);
+      sinon.assert.notCalled(stripeHelper.findAbbrevPlanById);
       sinon.assert.calledOnceWithExactly(
         stripeHelper.stripe.promotionCodes.list,
         {
@@ -1391,7 +1397,7 @@ describe('StripeHelper', () => {
     let sentryScope;
 
     const setDefaultFindPlanById = () =>
-      sandbox.stub(stripeHelper, 'findPlanById').resolves(planTemplate);
+      sandbox.stub(stripeHelper, 'findAbbrevPlanById').resolves(planTemplate);
 
     beforeEach(() => {
       sentryScope = { setContext: sandbox.stub() };
@@ -1424,7 +1430,7 @@ describe('StripeHelper', () => {
         ...couponTemplate,
         duration_in_months: 12,
       };
-      sandbox.stub(stripeHelper, 'findPlanById').resolves({
+      sandbox.stub(stripeHelper, 'findAbbrevPlanById').resolves({
         ...planTemplate,
         interval: 'year',
         interval_count: 1,
@@ -1444,7 +1450,7 @@ describe('StripeHelper', () => {
       const coupon = couponTemplate;
       const priceIntervalOverride = 'year';
 
-      sandbox.stub(stripeHelper, 'findPlanById').resolves({
+      sandbox.stub(stripeHelper, 'findAbbrevPlanById').resolves({
         ...planTemplate,
         interval: priceIntervalOverride,
       });
@@ -1489,7 +1495,7 @@ describe('StripeHelper', () => {
       const expected = false;
       const coupon = couponTemplate;
       const priceIntervalCountOverride = 6;
-      sandbox.stub(stripeHelper, 'findPlanById').resolves({
+      sandbox.stub(stripeHelper, 'findAbbrevPlanById').resolves({
         ...planTemplate,
         interval_count: priceIntervalCountOverride,
       });
@@ -1519,7 +1525,7 @@ describe('StripeHelper', () => {
     it('invalid plan interval', async () => {
       const expected = false;
       const coupon = couponTemplate;
-      sandbox.stub(stripeHelper, 'findPlanById').resolves({
+      sandbox.stub(stripeHelper, 'findAbbrevPlanById').resolves({
         ...planTemplate,
         interval: 'week',
       });
@@ -1903,7 +1909,7 @@ describe('StripeHelper', () => {
       sandbox
         .stub(stripeHelper.stripe.promotionCodes, 'list')
         .resolves({ data: [promotionCode] });
-      sandbox.stub(stripeHelper, 'findPlanById').resolves({
+      sandbox.stub(stripeHelper, 'findAbbrevPlanById').resolves({
         plan_metadata: {
           [STRIPE_PRICE_METADATA.PROMOTION_CODES]: 'promo1',
         },
@@ -1921,7 +1927,7 @@ describe('StripeHelper', () => {
       sandbox
         .stub(stripeHelper.stripe.promotionCodes, 'list')
         .resolves({ data: [promotionCode] });
-      sandbox.stub(stripeHelper, 'findPlanById').resolves({
+      sandbox.stub(stripeHelper, 'findAbbrevPlanById').resolves({
         plan_metadata: {
           [STRIPE_PRICE_METADATA.PROMOTION_CODES]: 'promo2',
         },
@@ -2123,7 +2129,7 @@ describe('StripeHelper', () => {
     };
     it('finds a promo code for a given plan', async () => {
       const promotionCode = 'promo1';
-      sandbox.stub(stripeHelper, 'findPlanById').resolves({
+      sandbox.stub(stripeHelper, 'findAbbrevPlanById').resolves({
         plan_metadata: {
           [STRIPE_PRICE_METADATA.PROMOTION_CODES]: 'promo1',
         },
@@ -2139,7 +2145,7 @@ describe('StripeHelper', () => {
 
     it('does not find a promo code for a given plan', async () => {
       const promotionCode = 'promo1';
-      sandbox.stub(stripeHelper, 'findPlanById').resolves({
+      sandbox.stub(stripeHelper, 'findAbbrevPlanById').resolves({
         plan_metadata: {
           [STRIPE_PRICE_METADATA.PROMOTION_CODES]: 'promo2',
         },
@@ -3780,10 +3786,10 @@ describe('StripeHelper', () => {
     });
   });
 
-  describe('findPlanById', () => {
+  describe('findAbbrevPlanById', () => {
     it('finds a valid plan', async () => {
       const planId = 'plan_G93lTs8hfK7NNG';
-      const result = await stripeHelper.findPlanById(planId);
+      const result = await stripeHelper.findAbbrevPlanById(planId);
       assert(stripeHelper.stripe.plans.list.calledOnce);
       assert(result.plan_id, planId);
     });
@@ -3792,7 +3798,7 @@ describe('StripeHelper', () => {
       const planId = 'plan_9';
       let thrown;
       try {
-        await stripeHelper.findPlanById(planId);
+        await stripeHelper.findAbbrevPlanById(planId);
       } catch (err) {
         thrown = err;
       }

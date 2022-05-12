@@ -202,7 +202,7 @@ describe('subscriptions payPalRoutes', () => {
       subscription = deepCopy(subscription2);
       subscription.latest_invoice = deepCopy(openInvoice);
       stripeHelper.fetchCustomer = sinon.fake.resolves(customer);
-      stripeHelper.findPlanById = sinon.fake.resolves(plan);
+      stripeHelper.findAbbrevPlanById = sinon.fake.resolves(plan);
       payPalHelper.createBillingAgreement = sinon.fake.resolves('B-test');
       payPalHelper.agreementDetails = sinon.fake.resolves({
         countryCode: 'CA',
@@ -563,7 +563,7 @@ describe('subscriptions payPalRoutes', () => {
 
       it('should throw an error if billingAgreement country does not match planCurrency', async () => {
         plan.currency = 'eur';
-        stripeHelper.findPlanById = sinon.fake.resolves(plan);
+        stripeHelper.findAbbrevPlanById = sinon.fake.resolves(plan);
         try {
           await runTest('/oauth/subscriptions/active/new-paypal', {
             ...defaultRequestOptions,
@@ -778,7 +778,7 @@ describe('subscriptions payPalRoutes', () => {
       subscription.latest_invoice = deepCopy(openInvoice);
       customer.subscriptions.data = [subscription];
       stripeHelper.fetchCustomer = sinon.fake.resolves(customer);
-      stripeHelper.findPlanById = sinon.fake.resolves(plan);
+      stripeHelper.findAbbrevPlanById = sinon.fake.resolves(plan);
       payPalHelper.createBillingAgreement = sinon.fake.resolves('B-test');
       payPalHelper.agreementDetails = sinon.fake.resolves({
         countryCode: 'CA',
@@ -860,7 +860,7 @@ describe('subscriptions payPalRoutes', () => {
 
     it('should throw an error if billingAgreement country does not match planCurrency', async () => {
       customer.currency = 'eur';
-      stripeHelper.findPlanById = sinon.fake.resolves(plan);
+      stripeHelper.findAbbrevPlanById = sinon.fake.resolves(plan);
       try {
         await runTest(
           '/oauth/subscriptions/paymentmethod/billing-agreement',

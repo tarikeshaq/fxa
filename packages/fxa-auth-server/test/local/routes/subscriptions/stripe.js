@@ -740,7 +740,7 @@ describe('DirectStripeRoutes', () => {
     beforeEach(() => {
       plan = deepCopy(PLANS[2]);
       plan.currency = 'USD';
-      directStripeRoutesInstance.stripeHelper.findPlanById.resolves(plan);
+      directStripeRoutesInstance.stripeHelper.findAbbrevPlanById.resolves(plan);
       sandbox.stub(directStripeRoutesInstance, 'customerChanged').resolves();
       paymentMethod = deepCopy(paymentMethodFixture);
       directStripeRoutesInstance.stripeHelper.getPaymentMethod.resolves(
@@ -893,7 +893,7 @@ describe('DirectStripeRoutes', () => {
 
     it('errors if the planCurrency does not match the paymentMethod country', async () => {
       plan.currency = 'EUR';
-      directStripeRoutesInstance.stripeHelper.findPlanById.resolves(plan);
+      directStripeRoutesInstance.stripeHelper.findAbbrevPlanById.resolves(plan);
       VALID_REQUEST.payload = {
         priceId: 'Jane Doe',
         paymentMethodId: 'pm_asdf',
@@ -1738,7 +1738,7 @@ describe('DirectStripeRoutes', () => {
 
       plan = deepCopy(PLANS[0]);
       plan.currency = 'USD';
-      directStripeRoutesInstance.stripeHelper.findPlanById.resolves(plan);
+      directStripeRoutesInstance.stripeHelper.findAbbrevPlanById.resolves(plan);
       VALID_REQUEST.payload = { planId: plan.planId };
     });
 
@@ -1761,7 +1761,7 @@ describe('DirectStripeRoutes', () => {
 
     it("throws an error when the new plan currency doesn't match the customer's currency.", async () => {
       plan.currency = 'EUR';
-      directStripeRoutesInstance.stripeHelper.findPlanById.resolves(plan);
+      directStripeRoutesInstance.stripeHelper.findAbbrevPlanById.resolves(plan);
 
       try {
         await directStripeRoutesInstance.updateSubscription(VALID_REQUEST);

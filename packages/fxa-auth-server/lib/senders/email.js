@@ -11,6 +11,9 @@ const nodemailer = require('nodemailer');
 const safeUserAgent = require('../userAgent/safe');
 const url = require('url');
 const { URL } = url;
+const {
+  localizedPlanConfig,
+} = require('fxa-shared/subscriptions/configuration/utils');
 const { productDetailsFromPlan } = require('fxa-shared').subscriptions.metadata;
 const Renderer = require('./renderer').default;
 const { NodeRendererBindings } = require('./renderer/bindings-node');
@@ -2784,16 +2787,53 @@ module.exports = function (log, config, bounces) {
     // set this to avoid passing `metricsEnabled` around to all link functions
     this.metricsEnabled = metricsEnabled;
 
+    const localizedUrls = (message) => {
+      const defaultSureyUrl =
+        'https://survey.alchemer.com/s3/6534408/Privacy-Security-Product-Cancellation-of-Service-Q4-21';
+
+      const urls = {};
+
+      if (
+        config.subscriptions.productConfigsFirestore.enabled &&
+        message.planConfig
+      ) {
+        const localizedConfigs = localizedPlanConfig(message.planConfig);
+        // eslint did not like ??=
+        localizedConfigs['urls'] ?? (localizedConfigs['urls'] = {});
+        const urlKeys = {
+          termsOfServiceDownloadURL: 'termsOfServiceDownload',
+          privacyNoticeDownloadURL: 'privacyNoticeDownload',
+          cancellationSurveyUrl: 'cancellationSurvey',
+        };
+        Object.entries(urlKeys).forEach(([urlKey, configKey]) => {
+          if (localizedConfigs.urls[configKey]) {
+            urls[urlKey] = localizedConfigs.urls[configKey];
+          }
+        });
+      }
+
+      const cancellationSurveyUrl =
+        (message.productMetadata &&
+          message.productMetadata['product:cancellationSurveyURL']) ||
+        defaultSureyUrl;
+      return {
+        ...productDetailsFromPlan(
+          {
+            product_metadata:
+              message.productMetadata || message.subscription?.productMetadata,
+          },
+          determineLocale(message.acceptLanguage)
+        ),
+        cancellationSurveyUrl,
+        ...urls,
+      };
+    };
+
     const {
       termsOfServiceDownloadURL = this.subscriptionTermsUrl,
       privacyNoticeDownloadURL = this.privacyUrl,
-    } = productDetailsFromPlan(
-      {
-        product_metadata:
-          message.productMetadata || message.subscription?.productMetadata,
-      },
-      determineLocale(message.acceptLanguage)
-    );
+      cancellationSurveyUrl,
+    } = localizedUrls(message);
 
     // Generate all possible links. The option to use a specific link
     // is left up to the template.
@@ -2905,10 +2945,7 @@ module.exports = function (log, config, bounces) {
     );
     links.accountSettingsLinkAttributes = `href="${links.accountSettingsUrl}" target="_blank" rel="noopener noreferrer" style="color:#ffffff;font-weight:500;"`;
 
-    links.cancellationSurveyUrl =
-      (message.productMetadata &&
-        message.productMetadata['product:cancellationSurveyURL']) ||
-      'https://survey.alchemer.com/s3/6534408/Privacy-Security-Product-Cancellation-of-Service-Q4-21';
+    links.cancellationSurveyUrl = cancellationSurveyUrl;
 
     links.cancellationSurveyLinkAttributes = `href="${links.cancellationSurveyUrl}" style="text-decoration: none; color: #0060DF;"`;
 

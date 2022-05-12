@@ -89,11 +89,20 @@ function sendMail(mailer, messageToSend) {
   const messageType = parts[0];
   const messageSubType = parts[1];
 
+  const planConfig = {
+    urls: {
+      termsOfServiceDownload:
+        'https://example.com/subscription-product/terms/download',
+      privacyNoticeDownload:
+        'https://example.com/subscription-product/privacy/download',
+      download: 'http://getfirefox.com/',
+      emailIcon: 'http://placekitten.com/512/512',
+    },
+  };
+
   const productMetadata = {
-    'product:termsOfServiceDownloadURL':
-      'https://example.com/subscription-product/terms/download',
-    'product:privacyNoticeDownloadURL':
-      'https://example.com/subscription-product/privacy/download',
+    'product:termsOfServiceDownloadURL': planConfig.urls.termsOfServiceDownload,
+    'product:privacyNoticeDownloadURL': planConfig.urls.privacyNoticeDownload,
   };
 
   const message = {
@@ -111,8 +120,8 @@ function sendMail(mailer, messageToSend) {
     productId: '0123456789abcdef',
     planId: 'plan-example',
     productName: 'Firefox Fortress',
-    planEmailIconURL: 'http://placekitten.com/512/512',
-    planSuccessActionButtonURL: 'http://getfirefox.com/',
+    planEmailIconURL: planConfig.urls.emailIcon,
+    planSuccessActionButtonURL: planConfig.urls.download,
     planInterval: 'week',
     planIntervalCount: 4,
     playStoreLink: 'https://example.com/play-store',
@@ -176,6 +185,7 @@ function sendMail(mailer, messageToSend) {
         productName: 'Firefox Fortress',
       },
     ],
+    planConfig,
   };
 
   return mailer[messageType](message);

@@ -261,6 +261,13 @@ describe('SubscriptionReminders', () => {
       };
       reminder.db.account = sandbox.fake.resolves(account);
       mockLog.info = sandbox.fake.returns({});
+      mockStripeHelper.formatSubscriptionForEmail = sandbox.fake.resolves({});
+      mockStripeHelper.findAbbrevPlanById = sandbox.fake.resolves({
+        amount: longPlan1.amount,
+        currency: longPlan1.currency,
+        interval_count: longPlan1.interval_count,
+        interval: longPlan1.interval,
+      });
       const formattedSubscription = {
         id: 'subscriptionId',
         productMetadata: {
@@ -268,7 +275,9 @@ describe('SubscriptionReminders', () => {
           termsOfServiceUrl: 'http://tos',
         },
       };
-      mockStripeHelper.formatSubscriptionForEmail = sandbox.fake.resolves(formattedSubscription);
+      mockStripeHelper.formatSubscriptionForEmail = sandbox.fake.resolves(
+        formattedSubscription
+      );
       mockStripeHelper.findPlanById = sandbox.fake.resolves({
         amount: longPlan1.amount,
         currency: longPlan1.currency,
@@ -294,7 +303,7 @@ describe('SubscriptionReminders', () => {
         subscription
       );
       sinon.assert.calledOnceWithExactly(
-        mockStripeHelper.findPlanById,
+        mockStripeHelper.findAbbrevPlanById,
         longPlan1.id
       );
       sinon.assert.calledOnceWithExactly(
@@ -345,7 +354,7 @@ describe('SubscriptionReminders', () => {
       reminder.db.account = sandbox.fake.resolves({});
       reminder.updateSentEmail = sandbox.fake.resolves({});
       mockStripeHelper.formatSubscriptionForEmail = sandbox.fake.resolves({});
-      mockStripeHelper.findPlanById = sandbox.fake.resolves({
+      mockStripeHelper.findAbbrevPlanById = sandbox.fake.resolves({
         amount: longPlan1.amount,
         currency: longPlan1.currency,
         interval_count: longPlan1.interval_count,
@@ -371,7 +380,7 @@ describe('SubscriptionReminders', () => {
         subscription
       );
       sinon.assert.calledOnceWithExactly(
-        mockStripeHelper.findPlanById,
+        mockStripeHelper.findAbbrevPlanById,
         longPlan1.id
       );
       sinon.assert.calledOnceWithExactly(

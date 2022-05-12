@@ -26,12 +26,13 @@ export class PaymentConfigManagerError {
 export type PaymentConfigManagerConfig = {
   authFirestore: {
     prefix: string;
-  },
+  };
   subscriptions: {
     productConfigsFirestore: {
-      schemaValidation:ProductConfigSchemaValidation
-    }
-  }
+      enabled: boolean;
+      schemaValidation: ProductConfigSchemaValidation;
+    };
+  };
 };
 
 /**
