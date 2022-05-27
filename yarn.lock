@@ -9772,6 +9772,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/joi@npm:^14.3.4":
+  version: 14.3.4
+  resolution: "@types/joi@npm:14.3.4"
+  checksum: 084c0fe211b43a84d25317d772bb8f6426382f1975cb4065fbfa1da7a64c600e9068a9b13ec2a32ddbe71d14f25c90da14a196651acb27e35d02856dbf6d4798
+  languageName: node
+  linkType: hard
+
 "@types/jquery@npm:*":
   version: 3.3.38
   resolution: "@types/jquery@npm:3.3.38"
@@ -23146,6 +23153,7 @@ fsevents@~2.1.1:
     "@types/ioredis": ^4.26.4
     "@types/ip": ^1
     "@types/jest": ^26.0.23
+    "@types/joi": ^14.3.4
     "@types/js-md5": ^0.4.2
     "@types/lodash.omitby": ^4
     "@types/lodash.pick": ^4
