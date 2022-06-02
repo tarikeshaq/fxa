@@ -21,6 +21,8 @@ import {
 import { APIError, apiRetrieveCouponDetails } from '../../lib/apiClient';
 import { useCallbackOnce } from '../../lib/hooks';
 
+import { getDefaultErrorMessage } from '../../lib/errors';
+
 class CouponError extends Error {
   constructor(message: string) {
     super(message);
@@ -217,7 +219,7 @@ export const CouponForm = ({
       {error && (
         <Localized id={error}>
           <div className="coupon-error" data-testid="coupon-error">
-            {error}
+            {getDefaultErrorMessage[error]}
           </div>
         </Localized>
       )}

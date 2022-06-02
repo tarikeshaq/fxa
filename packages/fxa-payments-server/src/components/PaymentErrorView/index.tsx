@@ -3,7 +3,11 @@ import { useNavigate } from 'react-router-dom';
 import { Localized } from '@fluent/react';
 import { StripeError } from '@stripe/stripe-js';
 
-import { getErrorMessage, GeneralError } from '../../lib/errors';
+import {
+  getErrorMessageId,
+  GeneralError,
+  getDefaultErrorMessage,
+} from '../../lib/errors';
 import errorIcon from '../../images/error.svg';
 import SubscriptionTitle, { SubscriptionTitleType } from '../SubscriptionTitle';
 import TermsAndPrivacy from '../TermsAndPrivacy';
@@ -92,11 +96,15 @@ export const PaymentErrorView = ({
           <img id="error-icon" src={errorIcon} alt="error icon" />
           <div>
             <Localized
-              id={getErrorMessage(error)}
+              id={getErrorMessageId(error)}
               vars={{ productName, ...contentProps }}
             >
               <p data-testid="error-payment-submission">
-                {getErrorMessage(error)}
+                {
+                  getDefaultErrorMessage[
+                    getErrorMessageId(error) as unknown as any
+                  ]
+                }
               </p>
             </Localized>
           </div>

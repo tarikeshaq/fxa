@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, cleanup, fireEvent } from '@testing-library/react';
+import { render, cleanup, fireEvent, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom/extend-expect';
 import CouponForm, {
   checkPromotionCode,
@@ -14,6 +14,7 @@ import {
   SELECTED_PLAN,
 } from '../../lib/mock-data';
 import waitForExpect from 'wait-for-expect';
+import { getDefaultErrorMessage } from '../../lib/errors';
 
 import {
   coupon_REJECTED,
@@ -119,8 +120,13 @@ describe('CouponForm', () => {
       };
 
       const { queryByTestId, getByTestId } = subject();
-      fireEvent.change(getByTestId('coupon-input'), { target: { value: 'a' } });
-      fireEvent.click(getByTestId('coupon-button'));
+
+      await waitFor(() => {
+        fireEvent.change(getByTestId('coupon-input'), {
+          target: { value: 'a' },
+        });
+        fireEvent.click(getByTestId('coupon-button'));
+      });
 
       await waitForExpect(() => {
         expect(queryByTestId('coupon-error')).toBeInTheDocument();
@@ -129,12 +135,18 @@ describe('CouponForm', () => {
 
       const couponError = getByTestId('coupon-error');
 
-      expect(couponError).toHaveTextContent(CouponErrorMessageType.Invalid);
+      expect(couponError).toHaveTextContent(
+        getDefaultErrorMessage[
+          CouponErrorMessageType.Invalid
+        ] as unknown as string
+      );
 
-      fireEvent.change(getByTestId('coupon-input'), {
-        target: { value: 'again' },
+      await waitFor(() => {
+        fireEvent.change(getByTestId('coupon-input'), {
+          target: { value: 'again' },
+        });
+        fireEvent.click(getByTestId('coupon-button'));
       });
-      fireEvent.click(getByTestId('coupon-button'));
 
       await waitForExpect(() => {
         expect(queryByTestId('coupon-error')).toBeInTheDocument();
