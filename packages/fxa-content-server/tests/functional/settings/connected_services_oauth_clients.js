@@ -90,14 +90,14 @@ describe('connected services: oauth clients', () => {
     // disconnect
     await click(
       // the current lack of unique ids make the positional selector here necessary
-      `${selectors.SETTINGS.CONNECTED_SERVICES.HEADER} #service:nth-child(3) ${selectors.SETTINGS.CONNECTED_SERVICES.SIGN_OUT}`
+      `${selectors.SETTINGS.CONNECTED_SERVICES.HEADER} .my-1.settings-connected-service:nth-child(3) ${selectors.SETTINGS.CONNECTED_SERVICES.SIGN_OUT}`
     );
     await pollUntilGoneByQSA(
-      `${selectors.SETTINGS.CONNECTED_SERVICES.HEADER} #service:nth-child(4) ${selectors.SETTINGS.CONNECTED_SERVICES.SIGN_OUT}`
+      `${selectors.SETTINGS.CONNECTED_SERVICES.HEADER} .my-1.settings-connected-service:nth-child(4) ${selectors.SETTINGS.CONNECTED_SERVICES.SIGN_OUT}`
     );
     await click(selectors.SETTINGS.CONNECTED_SERVICES.REFRESH_BUTTON);
     await noSuchElement(
-      `${selectors.SETTINGS.CONNECTED_SERVICES.HEADER} #service:nth-child(4) ${selectors.SETTINGS.CONNECTED_SERVICES.SIGN_OUT}`
+      `${selectors.SETTINGS.CONNECTED_SERVICES.HEADER} .my-1.settings-connected-service:nth-child(4) ${selectors.SETTINGS.CONNECTED_SERVICES.SIGN_OUT}`
     );
   });
 
