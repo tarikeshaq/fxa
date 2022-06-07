@@ -4,15 +4,16 @@
 
 import * as Sentry from '@sentry/node';
 import { SQS } from 'aws-sdk';
+
 import { ILogger } from '../log';
-import { IAction, PiiData } from './models/pii';
+import { IFilterAction, PiiData } from './models/pii';
 
 /**
  * Base class for all filters
  */
 export abstract class FilterBase {
   constructor(
-    protected readonly actions: IAction[],
+    protected readonly actions: IFilterAction[],
     protected readonly logger?: ILogger
   ) {}
 
@@ -53,7 +54,7 @@ export class SentryPiiFilter extends FilterBase {
    * Creates a new PII Filter for sentry data
    * @param actions - Set of filters to apply
    */
-  constructor(actions: IAction[]) {
+  constructor(actions: IFilterAction[]) {
     super(actions);
   }
 
@@ -92,25 +93,31 @@ export class SentryPiiFilter extends FilterBase {
   }
 
   protected scrubRequest(event: Sentry.Event) {
-    if (event.request?.headers)
+    if (event.request?.headers) {
       event.request.headers = this.applyFilters(event.request.headers);
+    }
 
-    if (event.request?.data)
+    if (event.request?.data) {
       event.request.data = this.applyFilters(event.request.data);
+    }
 
-    if (event.request?.query_string)
+    if (event.request?.query_string) {
       event.request.query_string = this.applyFilters(
         event.request.query_string
       );
+    }
 
-    if (event.request?.env)
+    if (event.request?.env) {
       event.request.env = this.applyFilters(event.request.env);
+    }
 
-    if (event.request?.url)
+    if (event.request?.url) {
       event.request.url = this.applyFilters(event.request.url);
+    }
 
-    if (event.request?.cookies)
+    if (event.request?.cookies) {
       event.request.cookies = this.applyFilters(event.request.cookies);
+    }
 
     return this;
   }
@@ -152,7 +159,7 @@ export class SqsMessageFilter extends FilterBase {
    * Create a new SqsMessageFilter
    * @param actions
    */
-  constructor(actions: IAction[]) {
+  constructor(actions: IFilterAction[]) {
     super(actions);
   }
 

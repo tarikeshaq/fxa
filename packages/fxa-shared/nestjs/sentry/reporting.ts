@@ -6,8 +6,23 @@ import { GqlContextType, GqlExecutionContext } from '@nestjs/graphql';
 import * as Sentry from '@sentry/node';
 import { SQS } from 'aws-sdk';
 import { Request } from 'express';
+
 import { CommonPiiActions } from '../../sentry/pii-filter-actions';
 import { SentryPiiFilter, SqsMessageFilter } from '../../sentry/pii-filters';
+const piiFilter = new SentryPiiFilter([
+  CommonPiiActions.depthFilter,
+  CommonPiiActions.piiKeys,
+  CommonPiiActions.emailValues,
+  CommonPiiActions.tokenValues,
+  CommonPiiActions.ipV4Values,
+  CommonPiiActions.ipV6Values,
+  CommonPiiActions.urlUsernamePassword,
+]);
+
+const sqsMessageFilter = new SqsMessageFilter([
+  CommonPiiActions.emailValues,
+  CommonPiiActions.tokenValues,
+]);
 
 export interface ExtraContext {
   name: string;
@@ -38,15 +53,6 @@ export function filterObject(obj: Record<string, any>) {
 export function filterSentryEvent(event: Sentry.Event, _hint: unknown) {
   return piiFilter.filter(event);
 }
-const piiFilter = new SentryPiiFilter([
-  CommonPiiActions.depthFilter,
-  CommonPiiActions.piiKeys,
-  CommonPiiActions.emailValues,
-  CommonPiiActions.tokenValues,
-  CommonPiiActions.ipV4Values,
-  CommonPiiActions.ipV6Values,
-  CommonPiiActions.urlUsernamePassword,
-]);
 
 /**
  * Capture a SQS Error to Sentry with additional context.
@@ -63,10 +69,6 @@ export function captureSqsError(err: Error, message?: SQS.Message): void {
     Sentry.captureException(err);
   });
 }
-const sqsMessageFilter = new SqsMessageFilter([
-  CommonPiiActions.emailValues,
-  CommonPiiActions.tokenValues,
-]);
 
 /**
  * Report an exception with request and additional optional context objects.

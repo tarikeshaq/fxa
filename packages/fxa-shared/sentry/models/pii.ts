@@ -6,7 +6,7 @@
 export type PiiData = Record<string, any> | string | undefined | null;
 
 /** A general interface for running a filter action on PII Data */
-export interface IAction {
+export interface IFilterAction {
   /**
    * Filters a value for PII
    * @param val - the value to filter

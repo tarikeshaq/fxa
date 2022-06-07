@@ -7,6 +7,7 @@ import * as uuid from 'uuid';
 import {
   CommonPiiActions,
   DepthFilter,
+  TRUNCATED,
   FILTERED,
   PiiRegexFilter,
 } from '../../sentry/pii-filter-actions';
@@ -23,7 +24,7 @@ describe('pii-filter-actions', () => {
     it('truncates objects when depth is greater than or equal to max depth', () => {
       const filter = new DepthFilter(1);
       expect(filter.execute({ foo: 'bar' }, 1)).to.deep.equal({
-        foo: '[Truncated]',
+        foo: TRUNCATED,
       });
     });
 
@@ -115,14 +116,14 @@ describe('pii-filter-actions', () => {
       const result = CommonPiiActions.emailValues.execute(
         'http://foo.bar/?email=foxkey@mozilla.com&key=1'
       );
-      expect(result).to.equal('http://foo.bar/?[Filtered]&key=1');
+      expect(result).to.equal(`http://foo.bar/?${FILTERED}&key=1`);
     });
 
     it('filters username / password from url', () => {
       const result = CommonPiiActions.urlUsernamePassword.execute(
         'http://me:wut@foo.bar/'
       );
-      expect(result).to.equal('http://[Filtered]:[Filtered]@foo.bar/');
+      expect(result).to.equal(`http://${FILTERED}:${FILTERED}@foo.bar/`);
     });
 
     it('ipv6 values', () => {
@@ -214,7 +215,7 @@ describe('pii-filter-actions', () => {
       const result = CommonPiiActions.tokenValues.execute(
         'https://foo.bar/?uid=12345678123456781234567812345678'
       );
-      expect(result).to.equal('https://foo.bar/?uid=[Filtered]');
+      expect(result).to.equal(`https://foo.bar/?uid=${FILTERED}`);
     });
 
     it('filters multiple multiline token values', () => {

@@ -7,6 +7,10 @@ import { filterObject } from './reporting';
 
 const FILTERED = '[Filtered]';
 
+function getUid() {
+  return uuid.v4().replace(/-/g, '');
+}
+
 describe('filterObject', () => {
   it('should be defined', () => {
     expect(filterObject).toBeDefined();
@@ -16,8 +20,8 @@ describe('filterObject', () => {
   it('should filter array of key/value arrays', () => {
     const input = {
       extra: [
-        ['foo', uuid.v4().replace(/-/g, '')],
-        ['baz', uuid.v4().replace(/-/g, '')],
+        ['foo', getUid()],
+        ['baz', getUid()],
         ['bar', 'fred'],
       ],
     };
@@ -35,8 +39,8 @@ describe('filterObject', () => {
   it('should filter an object of key/value pairs', () => {
     const input = {
       extra: {
-        foo: uuid.v4().replace(/-/g, ''),
-        baz: uuid.v4().replace(/-/g, ''),
+        foo: getUid(),
+        baz: getUid(),
         bar: 'fred',
       },
     };
@@ -54,7 +58,7 @@ describe('filterObject', () => {
   it('should skip nested arrays that are not valid key/value arrays', () => {
     const input = {
       extra: [
-        ['foo', uuid.v4().replace(/-/g, '')],
+        ['foo', getUid()],
         ['bar', 'fred'],
         ['fizz', 'buzz', 'parrot'],
       ],

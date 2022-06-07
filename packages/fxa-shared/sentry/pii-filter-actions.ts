@@ -2,7 +2,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
-import { CheckOnly, IAction, PiiData } from './models/pii';
+import { CheckOnly, IFilterAction, PiiData } from './models/pii';
 
 /** Default replacement value */
 export const FILTERED = '[Filtered]';
@@ -11,7 +11,7 @@ export const TRUNCATED = '[Truncated]';
 /**
  * A filter that truncates anything over maxDepth. This is a good first action.
  */
-export class DepthFilter implements IAction {
+export class DepthFilter implements IFilterAction {
   /**
    * Maximum Depth
    * @param maxDepth
@@ -31,7 +31,7 @@ export class DepthFilter implements IAction {
 /**
  * A base class for other PiiFilters. Supports checking keys and values
  */
-export abstract class PiiFilter implements IAction {
+export abstract class PiiFilter implements IFilterAction {
   /** Flag determining if object values should be checked. */
   protected get checkValues() {
     return this.checkOnly === 'values' || this.checkOnly === 'both';
@@ -103,7 +103,7 @@ export abstract class PiiFilter implements IAction {
 /**
  * Uses a regular expression to scrub PII
  */
-export class PiiRegexFilter extends PiiFilter implements IAction {
+export class PiiRegexFilter extends PiiFilter implements IFilterAction {
   /**
    * Creates a new regex filter action
    * @param regex - regular expression to use for filter

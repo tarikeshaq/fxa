@@ -7,11 +7,12 @@ import { SQS } from 'aws-sdk';
 import { expect } from 'chai';
 import sinon from 'sinon';
 import { ILogger } from '../../log';
-import { IAction, PiiData } from '../../sentry/models/pii';
+import { IFilterAction, PiiData } from '../../sentry/models/pii';
 import {
   CommonPiiActions,
   FILTERED,
   PiiRegexFilter,
+  TRUNCATED,
 } from '../../sentry/pii-filter-actions';
 import {
   FilterBase,
@@ -129,12 +130,12 @@ describe('pii-filters', () => {
       event = sentryFilter.filter(event);
 
       expect(event).to.deep.equal({
-        message: 'A [Filtered] message.',
+        message: `A ${FILTERED} message.`,
         breadcrumbs: [
           {
-            message: 'A [Filtered] breadcrumb',
+            message: `A ${FILTERED} breadcrumb`,
             data: {
-              first_name: '[Filtered]',
+              first_name: FILTERED,
               last_name: 'bar',
             },
           },
@@ -143,26 +144,26 @@ describe('pii-filters', () => {
           },
         ],
         request: {
-          url: 'http://[Filtered]:[Filtered]@[Filtered].bar/?[Filtered]&uid=[Filtered]',
+          url: `http://${FILTERED}:${FILTERED}@${FILTERED}.bar/?${FILTERED}&uid=${FILTERED}`,
           query_string: {
-            email: '[Filtered]',
-            uid: '[Filtered]',
+            email: FILTERED,
+            uid: FILTERED,
           },
           cookies: {
-            user: '[Filtered]',
+            user: FILTERED,
           },
           env: {
-            key: '--[Filtered]',
+            key: `--${FILTERED}`,
           },
           headers: {
-            foo: 'a [Filtered] header',
-            bar: 'a [Filtered] bar bar header',
-            'oidc-claim': '[Filtered]',
+            foo: `a ${FILTERED} header`,
+            bar: `a ${FILTERED} bar bar header`,
+            'oidc-claim': `${FILTERED}`,
           },
           data: {
             info: {
-              email: '[Filtered]',
-              uid: '[Filtered]',
+              email: `${FILTERED}`,
+              uid: `${FILTERED}`,
             },
             time: new Date(0).getTime(),
           },
@@ -170,20 +171,19 @@ describe('pii-filters', () => {
         exception: {
           values: [
             {
-              value:
-                '[Filtered] bar! A user with email [Filtered] and ip [Filtered] encountered an err.',
+              value: `${FILTERED} bar! A user with email ${FILTERED} and ip ${FILTERED} encountered an err.`,
             },
           ],
         },
         extra: {
           meta: {
-            email: '[Filtered]',
+            email: FILTERED,
           },
           l1: {
             l2: {
               l3: {
                 l4: {
-                  l5: '[Truncated]',
+                  l5: TRUNCATED,
                 },
               },
             },
@@ -191,12 +191,12 @@ describe('pii-filters', () => {
         },
         user: {
           meta: {
-            email: '[Filtered]',
+            email: FILTERED,
           },
-          id: '[Filtered]123',
-          ip_address: '[Filtered]',
-          email: '[Filtered]',
-          username: '[Filtered]',
+          id: `${FILTERED}123`,
+          ip_address: FILTERED,
+          email: FILTERED,
+          username: FILTERED,
         },
         type: 'transaction',
         spans: undefined, // Not testing, let's be careful not put PII in spans,
@@ -230,7 +230,7 @@ describe('pii-filters', () => {
       sandbox.restore();
     });
 
-    class BadAction implements IAction {
+    class BadAction implements IFilterAction {
       execute<T extends PiiData>(val: T, depth?: number): T {
         throw new Error('Boom');
       }
