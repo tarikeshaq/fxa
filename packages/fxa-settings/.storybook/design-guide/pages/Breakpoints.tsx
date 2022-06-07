@@ -106,7 +106,7 @@ const Breakpoints = ({ config }) => {
 
       {/* NOTE: this section is not dynamic */}
       <div
-        className={`shadow-md mb-4 rounded border border-black border-opacity-25 p-3 w-full text-white bg-yellow-700 mobileLandscape:bg-green-800 tablet:bg-violet-600 desktop:bg-blue-800 desktopXl:bg-red-700 overflow-scroll whitespace-no-wrap`}
+        className={`shadow-md mb-4 rounded border border-black border-opacity-25 p-3 w-full text-white bg-yellow-700 mobileLandscape:bg-green-800 tablet:bg-violet-600 desktop:bg-blue-800 desktopXl:bg-red-700 overflow-scroll whitespace-nowrap`}
       >
         <Copiable value="bg-yellow-700 mobileLandscape:bg-green-800 tablet:bg-violet-600 desktop:bg-blue-800 desktopXl:bg-red-700">
           <code className="px-2 py-1 rounded-sm bg-white bg-opacity-75 text-black mobileLandscape:bg-transparent mobileLandscape:text-white">
