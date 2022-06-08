@@ -48,6 +48,7 @@ export enum Proc {
   PasswordChangeToken = 'passwordChangeToken_3',
   PasswordForgotToken = 'passwordForgotToken_2',
   PurgeAvailableCommands = 'purgeAvailableCommands_1',
+  Prune = 'prune_8',
   RecoveryCodes = 'recoveryCodes_1',
   RecoveryKey = 'getRecoveryKey_4',
   ResetAccount = 'resetAccount_16',
