@@ -1,4 +1,5 @@
-/* @tailwind base; // Removing for now, however we should strongly consider re-enabling once more completely migrating components to TailwindCSS*/
+/* '@tailwind base' should be enabled once Payments is completely converted to Tailwind.
+ * We must also modify payments' tailwind config file and remove the .preflight edit */
 /* @tailwind base; */
 @tailwind components;
 @tailwind utilities;
