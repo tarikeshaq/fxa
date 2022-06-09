@@ -1,4 +1,7 @@
 #!/bin/bash
+if [ ! -d artifacts ]; then
+  mkdir artifacts
+fi
 
 # 1. Get the list of all modified and dependent packages.
 # Cleans up yarn's output by removing everything before the package name, the first and the last line.
