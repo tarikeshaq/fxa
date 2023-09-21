@@ -78,6 +78,17 @@ export type FxAOAuthLogin = {
   state: string;
 };
 
+// Suffix to ensure each message has a unique messageId.
+// Every send increments the suffix by 1.
+// A module variable is used instead of an instance variable because
+// more than one channel can exist. Using an instance variable,
+// it's possible for two messages on two channels to have the same
+// messageId, if both channels send a message in the same millisecond.
+// This might not cause any harm in reality, but this avoids
+// that possibility.
+let messageIdSuffix = 0;
+
+
 export class Firefox extends EventTarget {
   private broadcastChannel?: BroadcastChannel;
   readonly id: string;
@@ -137,7 +148,7 @@ export class Firefox extends EventTarget {
   private formatEventDetail(
     command: FirefoxCommand,
     data: any,
-    messageId: string = ''
+    messageId: string
   ) {
     const detail = {
       id: this.id,
@@ -159,7 +170,10 @@ export class Firefox extends EventTarget {
   }
 
   // send a message to the browser chrome
-  send(command: FirefoxCommand, data: any, messageId?: string) {
+  send(command: FirefoxCommand, data: any) {
+    // If two messages are created within the same millisecond, Date.now()
+    // returns the same value. Append a suffix that ensures uniqueness
+    const messageId = `${Date.now()}${++messageIdSuffix}`;
     const detail = this.formatEventDetail(command, data, messageId);
     window.dispatchEvent(
       new CustomEvent('WebChannelMessageToChrome', {
