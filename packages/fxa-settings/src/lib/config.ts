@@ -67,6 +67,7 @@ export interface Config {
     redirectUri: string;
     authorizationEndpoint: string;
   };
+  sendFxAStatusOnSettings: boolean;
 }
 
 export function getDefault() {
@@ -125,6 +126,7 @@ export function getDefault() {
       redirectUri: '',
       authorizationEndpoint: '',
     },
+    sendFxAStatusOnSettings: false,
   } as Config;
 }
 
