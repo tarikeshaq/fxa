@@ -53,6 +53,7 @@
     "simpleRoutes": true
   },
   "featureFlags": {
-    "showRecoveryKeyV2": true
+    "showRecoveryKeyV2": true,
+    "sendFxAStatusOnSettings": true
   }
 }
