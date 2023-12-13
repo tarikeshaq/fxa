@@ -1237,16 +1237,16 @@ export class AccountHandler {
         authMethods.maximumAssuranceLevel(amrValues);
     }
 
-    if (
-      this.config.subscriptions?.enabled &&
-      scope.contains('profile:subscriptions')
-    ) {
-      const capabilities =
-        await this.capabilityService.subscriptionCapabilities(uid as string);
-      if (Object.keys(capabilities).length > 0) {
-        res.subscriptionsByClientId = capabilities;
-      }
-    }
+    // if (
+    //   this.config.subscriptions?.enabled &&
+    //   scope.contains('profile:subscriptions')
+    // ) {
+    //   const capabilities =
+    //     await this.capabilityService.subscriptionCapabilities(uid as string);
+    //   if (Object.keys(capabilities).length > 0) {
+    //     res.subscriptionsByClientId = capabilities;
+    //   }
+    // }
 
     // If no keys set on the response, there was no valid profile scope found. We only
     // want to return `profileChangedAt` if a valid scope was found and set.
