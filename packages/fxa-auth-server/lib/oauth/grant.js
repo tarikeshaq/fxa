@@ -4,9 +4,9 @@
 
 const buf = require('buf').hex;
 const hex = require('buf').to.hex;
-const { Container } = require('typedi');
+//const { Container } = require('typedi');
 
-const { CapabilityService } = require('../payments/capability');
+//const { CapabilityService } = require('../payments/capability');
 const { config } = require('../../config');
 const OauthError = require('./error');
 const db = require('./db');
@@ -42,13 +42,13 @@ const UNTRUSTED_CLIENT_ALLOWED_SCOPES = ScopeSet.fromArray([
 ]);
 
 /** @type {CapabilityService} */
-let capabilityService = undefined;
+//let capabilityService = undefined;
 
 module.exports.setStripeHelper = function (val) {
   // This is a less than ideal hook into the existing call-stack to
   // set the capabilityService at a time after the primary initialization
   // of objects has occurred.
-  capabilityService = Container.get(CapabilityService);
+  //capabilityService = Container.get(CapabilityService);
 };
 
 // Given a set of verified user identity claims, can the given client
@@ -154,10 +154,10 @@ module.exports.validateRequestedGrant = async function validateRequestedGrant(
 //
 // This function does *not* perform any authentication or validation, assuming that
 // the specified grant has been sufficiently vetted by calling code.
-module.exports.generateTokens = async function generateTokens(grant) {
+module.exports.generateTokens = async function generateTokens(grant, log) {
   // We always generate an access_token.
-  const access = await exports.generateAccessToken(grant);
-
+  const access = await exports.generateAccessToken(grant, log);
+  log.debug('auth.token: Generated Access token');
   const result = {
     access_token: access.jwt_token || access.token.toString('hex'),
     token_type: access.type,
@@ -174,6 +174,7 @@ module.exports.generateTokens = async function generateTokens(grant) {
   // Maybe also generate a refreshToken?
   if (grant.offline) {
     const refresh = await db.generateRefreshToken(grant);
+    log.debug('auth.token: Generated Refresh Token');
     result.refresh_token = refresh.token.toString('hex');
   }
   // Maybe also generate an idToken?
@@ -236,22 +237,22 @@ exports.generateAccessToken = async function generateAccessToken(grant) {
     return accessToken;
   }
 
-  if (grant.scope.contains('profile:subscriptions')) {
-    const capabilities =
-      await capabilityService.determineClientVisibleSubscriptionCapabilities(
-        hex(clientId),
-        await capabilityService.subscriptionCapabilities(
-          hex(grant.userId),
-          grant.email
-        )
-      );
-    // To avoid mutating the input grant, create a
-    // copy and add the new property there.
-    grant = {
-      ...grant,
-      'fxa-subscriptions': capabilities,
-    };
-  }
+  // if (grant.scope.contains('profile:subscriptions')) {
+  //   const capabilities =
+  //     await capabilityService.determineClientVisibleSubscriptionCapabilities(
+  //       hex(clientId),
+  //       await capabilityService.subscriptionCapabilities(
+  //         hex(grant.userId),
+  //         grant.email
+  //       )
+  //     );
+  //   // To avoid mutating the input grant, create a
+  //   // copy and add the new property there.
+  //   grant = {
+  //     ...grant,
+  //     'fxa-subscriptions': capabilities,
+  //   };
+  // }
 
   return JWTAccessToken.create(accessToken, grant);
 };

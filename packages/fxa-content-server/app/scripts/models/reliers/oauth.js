@@ -389,7 +389,8 @@ var OAuthRelier = Relier.extend({
           this._wantsScopeThatHasKeys = true;
         } else {
           // Requesting keys, but trying to deliver them to an unexpected uri? Nope.
-          throw new Error('Invalid redirect parameter');
+          throw new Error(`Invalid redirect parameter ${this.get('redirectUri')}
+	                        Not in ${validation[scope].redirectUris})}`);
         }
       }
     });

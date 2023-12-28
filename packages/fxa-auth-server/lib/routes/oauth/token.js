@@ -359,7 +359,7 @@ module.exports = ({ log, oauthDB, db, mailer, devices, statsd }) => {
   async function tokenHandler(req) {
     var params = req.payload;
     const client = await authenticateClient(req.headers, params);
-
+    log.debug('auth.token: Authenticated client');
     // Refuse to generate new access tokens for disabled clients that are already
     // connected to the account.  We allow disabled clients to claim existing authorization
     // codes, because otherwise we risk erroring out halfway through an app login flow
@@ -371,8 +371,13 @@ module.exports = ({ log, oauthDB, db, mailer, devices, statsd }) => {
     ) {
       throw OauthError.disabledClient(hex(client.id));
     }
+
     const grant = await validateGrantParameters(client, params);
-    const tokens = await generateTokens(grant);
+
+    log.debug('auth.token: granted client');
+    const tokens = await generateTokens(grant, log);
+
+    log.debug('auth.token: got tokens client');
     req.emitMetricsEvent('token.created', {
       service: hex(grant.clientId),
       uid: hex(grant.userId),
@@ -550,13 +555,17 @@ module.exports = ({ log, oauthDB, db, mailer, devices, statsd }) => {
       },
       handler: async function (req) {
         const sessionToken = req.auth.credentials;
+        log.debug('auth.token Handler starterd');
         delete req.headers.authorization;
         let grant;
         switch (req.payload.grant_type) {
           case 'authorization_code':
           case 'refresh_token':
             try {
+              log.debug('auth.token about to trigger handler');
               grant = await tokenHandler(req);
+
+              log.debug('auth.token got grant!');
             } catch (err) {
               // TODO auth/oauth error reconciliation
               if (err.errno === 108) {
