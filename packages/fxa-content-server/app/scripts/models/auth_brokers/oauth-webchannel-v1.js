@@ -6,6 +6,7 @@
  * WebChannel OAuth broker that speaks 'v1' of the protocol.
  */
 import _ from 'underscore';
+import AuthErrors from '../../lib/auth-errors';
 import ChannelMixin from './mixins/channel';
 import Cocktail from 'cocktail';
 import Constants from '../../lib/constants';
@@ -45,7 +46,8 @@ const OAuthWebChannelBroker = OAuthRedirectAuthenticationBroker.extend({
     'FXA_STATUS',
     'LOGIN',
     'OAUTH_LOGIN',
-    'DELETE_ACCOUNT'
+    'DELETE_ACCOUNT',
+    'CAN_LINK_ACCOUNT'
   ),
 
   type: Constants.OAUTH_WEBCHANNEL_BROKER,
@@ -76,6 +78,40 @@ const OAuthWebChannelBroker = OAuthRedirectAuthenticationBroker.extend({
   afterCompleteSignInWithCode(account) {
     return this._notifyRelierOfLogin(account).then(() =>
       proto.afterSignInConfirmationPoll.call(this, account)
+    );
+  },
+
+  beforeSignIn(account) {
+    const email = account.get('email');
+    if (this._verifiedCanLinkEmail === email) {
+      // This user has already been asked and responded that
+      // they want to link the account. Do not ask again or
+      // else the user sees the "can link account" browser
+      // dialog twice in the "Signin unblock" flow.
+      return proto.beforeSignIn.call(this, account);
+    }
+
+    // This will send a message over the channel to determine whether
+    // we should cancel the login to sync or not based on Desktop
+    // specific checks and dialogs. It throws an error with
+    // message='USER_CANCELED_LOGIN' and errno=1001 if that's the case.
+    return this.request(this.getCommand('CAN_LINK_ACCOUNT'), {
+      email,
+    }).then(
+      (response) => {
+        if (response && !response.ok) {
+          throw AuthErrors.toError('USER_CANCELED_LOGIN');
+        }
+        this._verifiedCanLinkEmail = email;
+        return proto.beforeSignIn.call(this, account);
+      },
+      (err) => {
+        this._logger.error('beforeSignIn failed with', err);
+        // If the browser doesn't implement this command, then it will
+        // handle prompting the relink warning after sign in completes.
+        // This can likely be changed to 'reject' after Fx31 hits nightly,
+        // because all browsers will likely support 'can_link_account'
+      }
     );
   },
 
